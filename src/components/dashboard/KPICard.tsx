@@ -29,35 +29,33 @@ export const KPICard = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={hasClick ? { y: -4, scale: 1.02 } : {}}
-      className={`relative overflow-hidden group p-5 bg-white border border-neutral-200 rounded-2xl shadow-sm transition-all duration-300 ${hasClick ? 'cursor-pointer hover:shadow-xl hover:border-primary-200' : ''
-        }`}
+      whileHover={hasClick ? { y: -3 } : { y: -2 }}
+      className={`relative overflow-hidden group p-5 rounded-2xl border border-neutral-200 bg-white/95 backdrop-blur-sm shadow-sm transition-all duration-300 ${hasClick ? 'cursor-pointer hover:border-primary-200 hover:shadow-lg' : 'hover:border-neutral-300'}`}
       onClick={onClick}
     >
-      {/* Background Gradient Detail */}
-      <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary-50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary-500 to-cyan-500 opacity-80" />
 
       <div className="relative z-10">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">{label}</p>
+            <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">{label}</p>
             <h3 className="text-3xl font-bold text-neutral-900 tracking-tight">{value}</h3>
           </div>
           {icon && (
-            <div className="p-2.5 bg-gradient-to-br from-primary-50 to-white border border-primary-100 rounded-xl shadow-inner text-primary-600 group-hover:scale-110 transition-transform duration-300">
+            <div className="p-2.5 bg-primary-50 border border-primary-100 rounded-xl text-primary-600">
               {icon}
             </div>
           )}
         </div>
 
-        <div className="mt-6 flex items-end justify-between gap-4">
+        <div className="mt-5 flex items-end justify-between gap-4">
           <div className="flex-1">
             {delta && (
               <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-bold ${delta.isPositive !== false
-                  ? delta.trend === 'up' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'
-                  : delta.trend === 'up' ? 'bg-red-50 text-red-700 border border-red-100' : 'bg-green-50 text-green-700 border border-green-100'
+                ? delta.trend === 'up' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'
+                : delta.trend === 'up' ? 'bg-red-50 text-red-700 border border-red-100' : 'bg-green-50 text-green-700 border border-green-100'
                 }`}>
                 {delta.trend === 'up' ? (
                   <TrendingUp className="w-3 h-3" />
@@ -70,7 +68,7 @@ export const KPICard = ({
           </div>
 
           {sparklineData && sparklineData.length > 0 && (
-            <div className="w-20 h-10 -mb-1 opacity-60 group-hover:opacity-100 transition-opacity">
+            <div className="w-20 h-10 -mb-1 opacity-70 group-hover:opacity-100 transition-opacity">
               <Sparkline data={sparklineData} trend={delta?.trend} />
             </div>
           )}
@@ -80,7 +78,6 @@ export const KPICard = ({
   );
 };
 
-// Polished Sparkline Component
 const Sparkline = ({ data, trend }: { data: number[]; trend?: 'up' | 'down' }) => {
   const max = Math.max(...data);
   const min = Math.min(...data);
@@ -88,7 +85,7 @@ const Sparkline = ({ data, trend }: { data: number[]; trend?: 'up' | 'down' }) =
 
   const points = data.map((value, index) => {
     const x = (index / (data.length - 1)) * 100;
-    const y = 90 - ((value - min) / range) * 80; // Margin top/bottom
+    const y = 90 - ((value - min) / range) * 80;
     return `${x},${y}`;
   }).join(' ');
 
@@ -102,10 +99,7 @@ const Sparkline = ({ data, trend }: { data: number[]; trend?: 'up' | 'down' }) =
           <stop offset="100%" stopColor={strokeColor} stopOpacity="0" />
         </linearGradient>
       </defs>
-      <path
-        d={`M 0 100 L ${points} L 100 100 Z`}
-        fill="url(#gradient)"
-      />
+      <path d={`M 0 100 L ${points} L 100 100 Z`} fill="url(#gradient)" />
       <polyline
         points={points}
         fill="none"

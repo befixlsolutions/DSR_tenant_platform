@@ -44,7 +44,7 @@
   --color-danger-700: #b91c1c;
 
   /* Background - Very light neutral */
-  --bg-primary: #f8fafc;
+  --bg-primary: linear-gradient(160deg, #f6f8ff 0%, #f8fafc 40%, #f3fbff 100%);
   --bg-secondary: #ffffff;
   --bg-card: #ffffff;
 
@@ -126,11 +126,11 @@
 @layer components {
   /* Premium Card Styles */
   .card {
-    @apply bg-white rounded-xl border border-neutral-200 shadow-[var(--shadow-card)] p-4 transition-all duration-200;
+    @apply bg-white/90 backdrop-blur-sm rounded-2xl border border-neutral-200 shadow-[var(--shadow-card)] p-4 transition-all duration-200;
   }
 
   .card-hover {
-    @apply hover:shadow-[var(--shadow-card-hover)] hover:border-neutral-300;
+    @apply hover:shadow-[var(--shadow-card-hover)] hover:border-primary-200 hover:-translate-y-0.5;
   }
 
   /* Button Styles - Unified with Indigo */
@@ -139,7 +139,7 @@
   }
 
   .btn-primary {
-    @apply bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 shadow-sm;
+    @apply bg-gradient-to-r from-primary-600 to-indigo-600 text-white hover:from-primary-700 hover:to-indigo-700 focus:ring-primary-500 shadow-sm;
   }
 
   .btn-secondary {

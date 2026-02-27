@@ -1,6 +1,5 @@
 'use client';
 
-import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 
 interface ActionItem {
@@ -30,8 +29,8 @@ export const ActionPanel = ({
 }: ActionPanelProps) => {
   return (
     <div className={`card ${className}`}>
-      <h3 className="text-base font-semibold text-neutral-900 mb-4">{title}</h3>
-      
+      <h3 className="text-base font-bold text-neutral-900 mb-4">{title}</h3>
+
       {items.length === 0 ? (
         <p className="text-sm text-neutral-500 text-center py-6">{emptyMessage}</p>
       ) : (
@@ -39,13 +38,13 @@ export const ActionPanel = ({
           {items.map((item, index) => (
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 14 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="p-3 bg-neutral-50 rounded-lg border border-neutral-200 hover:border-neutral-300 transition-colors"
+              className="p-3 bg-gradient-to-r from-white to-neutral-50 rounded-xl border border-neutral-200 hover:border-primary-200 transition-colors"
             >
               <div className="flex items-start justify-between gap-2 mb-2">
-                <p className="text-sm font-medium text-neutral-900 flex-1">{item.title}</p>
+                <p className="text-sm font-semibold text-neutral-900 flex-1">{item.title}</p>
                 {item.badge && (
                   <span className={`badge badge-${item.badge.variant} text-xs`}>
                     {item.badge.text}
@@ -58,7 +57,7 @@ export const ActionPanel = ({
               {item.action && (
                 <button
                   onClick={item.action}
-                  className="text-xs font-medium text-primary-600 hover:text-primary-700"
+                  className="text-xs font-semibold text-primary-600 hover:text-primary-700"
                 >
                   {item.actionLabel || 'View'}
                 </button>

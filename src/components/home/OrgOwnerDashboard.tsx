@@ -1,12 +1,25 @@
 'use client';
 
 import { useState } from 'react';
-import { CreditCard, Users, TrendingUp, AlertTriangle } from 'lucide-react';
+import { CreditCard, Sparkles, Users, AlertTriangle, BrainCircuit } from 'lucide-react';
 import { PageHeader } from '@/components/dashboard/PageHeader';
-import { KPICard } from '@/components/dashboard/KPICard';
 import { TodayFocusStrip } from '@/components/dashboard/TodayFocusStrip';
 import { ActionPanel } from '@/components/dashboard/ActionPanel';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 export const OrgOwnerDashboard = () => {
   const [dateRange, setDateRange] = useState('month');
@@ -17,6 +30,51 @@ export const OrgOwnerDashboard = () => {
   const renewalDays = 45;
   const orgCompliance = 92;
   const riskIndex = 23;
+
+  const topCards = [
+    {
+      label: 'Plan Utilization',
+      value: `${seatsUsed}/${seatsLimit}`,
+      subtext: '83% seats in use',
+      gradient: 'from-indigo-500 to-blue-500',
+      icon: Users,
+    },
+    {
+      label: 'Renewal Window',
+      value: `${renewalDays} Days`,
+      subtext: 'Enterprise annual cycle',
+      gradient: 'from-emerald-500 to-cyan-500',
+      icon: CreditCard,
+    },
+    {
+      label: 'Risk Index',
+      value: `${riskIndex}`,
+      subtext: `${orgCompliance}% compliance health`,
+      gradient: 'from-amber-500 to-rose-500',
+      icon: AlertTriangle,
+    },
+  ];
+
+  const complianceTrendData = [
+    { name: 'W1', value: 88 },
+    { name: 'W2', value: 90 },
+    { name: 'W3', value: 91 },
+    { name: 'W4', value: 92 },
+  ];
+
+  const bottleneckData = [
+    { team: 'Platform', count: 6 },
+    { team: 'Operations', count: 4 },
+    { team: 'People', count: 3 },
+    { team: 'Finance', count: 2 },
+  ];
+
+  const riskDistributionData = [
+    { name: 'Critical', value: 8, color: '#ef4444' },
+    { name: 'High', value: 7, color: '#f59e0b' },
+    { name: 'Medium', value: 5, color: '#0ea5e9' },
+    { name: 'Low', value: 3, color: '#22c55e' },
+  ];
 
   // Today focus items
   const focusItems = [
@@ -86,32 +144,28 @@ export const OrgOwnerDashboard = () => {
       )}
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <KPICard
-          label="Plan & Seats"
-          value={`${seatsUsed}/${seatsLimit}`}
-          delta={{ value: '83% utilized', trend: 'up', isPositive: true }}
-          icon={<Users className="w-5 h-5" />}
-        />
-        <KPICard
-          label="Renewal"
-          value={`${renewalDays} days`}
-          delta={{ value: 'Enterprise plan', trend: 'up', isPositive: true }}
-          icon={<CreditCard className="w-5 h-5" />}
-        />
-        <KPICard
-          label="Org Compliance"
-          value={`${orgCompliance}%`}
-          delta={{ value: '+1% vs last month', trend: 'up', isPositive: true }}
-          icon={<TrendingUp className="w-5 h-5" />}
-          sparklineData={[89, 90, 91, 91, 92, 92, 92]}
-        />
-        <KPICard
-          label="Risk Index"
-          value={riskIndex}
-          delta={{ value: '23 critical items', trend: 'down', isPositive: false }}
-          icon={<AlertTriangle className="w-5 h-5" />}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {topCards.map((card) => {
+          const Icon = card.icon;
+
+          return (
+            <div
+              key={card.label}
+              className={`rounded-2xl bg-gradient-to-br ${card.gradient} p-[1px] shadow-sm`}
+            >
+              <div className="h-full rounded-2xl bg-white/95 backdrop-blur-sm p-5 flex items-start justify-between">
+                <div>
+                  <p className="text-[11px] uppercase tracking-widest font-bold text-neutral-500">{card.label}</p>
+                  <p className="text-3xl font-bold text-neutral-900 mt-2">{card.value}</p>
+                  <p className="text-xs text-neutral-600 mt-1">{card.subtext}</p>
+                </div>
+                <div className={`p-3 rounded-xl bg-gradient-to-br ${card.gradient} text-white shadow-lg`}>
+                  <Icon className="w-5 h-5" />
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Main Content Grid */}
@@ -235,6 +289,61 @@ export const OrgOwnerDashboard = () => {
               </div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Leadership Intelligence Studio</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+                <div className="rounded-xl border border-neutral-200 p-3">
+                  <p className="text-xs font-semibold text-neutral-500 mb-2">Org Compliance Curve</p>
+                  <div className="h-44">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={complianceTrendData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                        <YAxis domain={[80, 100]} tick={{ fontSize: 11 }} />
+                        <Tooltip />
+                        <Line type="monotone" dataKey="value" stroke="#6366f1" strokeWidth={3} dot={{ r: 4 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-neutral-200 p-3">
+                  <p className="text-xs font-semibold text-neutral-500 mb-2">Bottleneck Leaders</p>
+                  <div className="h-44">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={bottleneckData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                        <XAxis dataKey="team" tick={{ fontSize: 11 }} />
+                        <YAxis tick={{ fontSize: 11 }} />
+                        <Tooltip />
+                        <Bar dataKey="count" fill="#3b82f6" radius={[6, 6, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-neutral-200 p-3">
+                  <p className="text-xs font-semibold text-neutral-500 mb-2">Risk Distribution</p>
+                  <div className="h-44">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={riskDistributionData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={62} innerRadius={35}>
+                          {riskDistributionData.map((entry) => (
+                            <Cell key={entry.name} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Right Column - Sticky Action Panel */}
@@ -243,7 +352,33 @@ export const OrgOwnerDashboard = () => {
             title="Owner Actions"
             items={actionItems}
             emptyMessage="All business metrics healthy! 📈"
+            className="min-h-[240px]"
           />
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <BrainCircuit className="w-4 h-4 text-primary-600" />
+                AI Reports
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="p-3 rounded-lg bg-primary-50 border border-primary-100">
+                  <p className="text-sm font-medium text-primary-900">Weekly AI Leadership Brief</p>
+                  <p className="text-xs text-primary-700 mt-1">Auto-generated summary for risk, reliability, and upcoming actions.</p>
+                </div>
+                <div className="p-3 rounded-lg bg-neutral-50 border border-neutral-200">
+                  <p className="text-sm font-medium text-neutral-900">Anomaly Watchlist</p>
+                  <p className="text-xs text-neutral-600 mt-1">2 unusual blocker spikes and 1 review delay cluster detected.</p>
+                </div>
+                <button className="btn btn-primary w-full text-xs flex items-center justify-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Generate AI Executive Report
+                </button>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Quick Actions */}
           <Card>
