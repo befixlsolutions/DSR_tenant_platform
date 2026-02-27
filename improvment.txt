@@ -1,0 +1,323 @@
+1) Bugs & Access Control Issues (High severity)
+A) Role-gating is broken (security + product trust)
+
+Employee can see Manager/Admin navigation items in the left sidebar:
+
+Team Reports, Department Reports, Approvals, Exports.
+
+Employee can open team-scope pages via URL (example in recording: /reporting?scope=team while role badge shows Employee).
+
+This is not only a UI bug—if backend also returns data, it becomes a serious RBAC/ABAC leak risk.
+
+Fix expectation
+
+UI must hide these pages.
+
+Server must block these routes and API calls for unauthorized roles.
+
+B) Conflicting “Overdue” logic (data correctness)
+
+On /reporting/inbox you show:
+
+Banner: “6h 9m remaining”
+
+But also a badge: “Overdue”
+
+These can’t both be true. This breaks trust quickly.
+
+Fix expectation
+
+Overdue only after cutoff; otherwise show Due today or Due in X.
+
+C) KPI inconsistency (dashboard trust)
+
+On /home:
+
+Goal Progress: 0/0
+
+But also: “3 on track”
+
+This is a logic mismatch or placeholder merge bug.
+
+D) “Washed-out” table area looks like a UI bug
+
+On /reporting?scope=team, the table/filter area appears faded/ghosted without clear reason.
+This can be:
+
+a disabled state without explanation
+
+loading without skeleton
+
+access denied but not handled
+
+Fix expectation
+
+If loading → skeleton loaders
+
+If denied → clear “You don’t have access” screen
+
+If empty → clear empty state with CTA
+
+2) Usability Issues (Medium severity)
+A) DSR “Quick Start” and “Same as Yesterday” lacks affordance
+
+In DSR create screen:
+
+“Same as Yesterday” looks like plain text (not an obvious action)
+
+Needs a button style + preview/confirm
+
+B) Blockers UX is too weak for a core object
+
+“Add Blocker” is plain text; should be a proper button
+
+Should open a structured modal (severity, owner, ETA, impact, escalation, linked goal/report)
+
+C) No sticky action bar for Save/Submit
+
+Users can scroll and lose track of submission controls. Enterprise apps fix this with a sticky bottom bar.
+
+D) Adding bullet items is slower than necessary
+
+You currently use input + Add button.
+Better enterprise UX:
+
+Enter-to-add
+
+inline edit
+
+reorder
+
+quick remove
+
+3) Role-Based UI: What should differ (your main issue)
+
+Right now most roles look identical. In an enterprise app, each role should have:
+
+different sidebar items
+
+different dashboard widgets
+
+different tables and drilldowns
+
+different actions/buttons
+
+Minimum role differentiation
+
+Employee: “Do my work + submit reports”
+
+Manager: “Review + unblock + coach”
+
+Dept Admin: “Department execution + bottlenecks”
+
+Org Admin/Owner: “Governance + configuration + adoption”
+
+HR: “Appraisal readiness + fairness (aggregate)”
+
+Auditor: “Logs + evidence packs (read-only)”
+
+4) Enterprise UI/UX Recommendations
+A) Layout & navigation improvements
+
+Role-based sidebar
+Employee sidebar should be minimal:
+
+Home, Reporting (Inbox/My Reports), Goals, Blockers, Dependencies, Actions, My Analytics, Support
+Remove Team/Dept/Admin items.
+
+Add “Today Focus” strip at top of dashboards
+A horizontal strip with 3–5 actionable items:
+
+“DSR due in 6h”
+
+“2 blockers missing ETA”
+
+“1 rework request pending”
+
+(Manager) “6 reviews pending”
+
+Sticky Right Action Panel
+For Manager/HR/Admin:
+
+Review queue, missing reports list, S1 blockers, cycle deadlines
+
+Keep it sticky on scroll
+
+Command palette (⌘K)
+Makes it feel premium:
+
+Create DSR
+
+Review queue
+
+Search people/reports/goals
+
+B) Modern enterprise color palette (simple + premium)
+
+You’re currently mixing multiple accents (green/orange/blue). Make it professional:
+
+Approach: 1 primary accent + neutrals + semantic status colors.
+
+Suggested palette (Tailwind-friendly)
+
+Primary (brand): Indigo 600
+
+Background: Slate 50
+
+Surface: White
+
+Border: Slate 200
+
+Text primary: Slate 900
+
+Text secondary: Slate 600
+
+Success: Green 600
+
+Warning: Amber 600
+
+Danger: Red 600
+
+Rules
+
+Use Primary for CTAs and active nav
+
+Use Success/Warning/Danger only for true status states
+
+C) Typography & spacing (instant “enterprise” feel)
+
+Page titles: 22–24px / semibold
+
+Section headers: 16–18px / semibold
+
+Body: 14–15px
+
+Labels: 12–13px
+
+Spacing scale: 8 / 12 / 16 / 24
+
+Border radius: 12–16 consistently
+
+D) Buttons & states (professional behavior)
+
+One primary button per view (clear hierarchy)
+
+Secondary actions in overflow menu
+
+All sensitive actions require:
+
+confirm modal
+
+reason (admin/export)
+
+Loading:
+
+show spinner only inside button
+
+skeleton loaders for tables/cards
+
+E) Animations (premium but subtle)
+
+Use motion for:
+
+drawer open/close
+
+hover lift on cards (small)
+
+tab transitions
+
+skeleton shimmer
+
+Avoid:
+
+bouncy animations
+
+heavy transitions that slow tables
+
+5) Recommended Libraries (Next.js enterprise stack)
+UI
+
+Tailwind CSS
+
+shadcn/ui (Radix-based)
+
+lucide-react icons
+
+Tables
+
+TanStack Table (sorting, pinning, server pagination)
+
+Charts
+
+Recharts (fast, clean)
+
+Optional later: ECharts if you need complex dashboards
+
+Animations
+
+Framer Motion
+
+Optional: @radix-ui/react-* for accessible popovers/dialogs/menus
+
+6) Analytics & Dashboard Enhancements (best chart set)
+Compliance (DSR/WSR)
+
+Line: submission % trend (7/30/90 days)
+
+Stacked bar: on-time vs late vs missed per week
+
+Leaderboard table: top missed (scope-gated)
+
+Review SLA (manager accountability)
+
+Aging buckets: 0–6h, 6–24h, 24–48h, 48h+
+
+Histogram: review time distribution
+
+Funnel: submitted → reviewed → approved
+
+Blockers
+
+Heatmap: category vs severity
+
+Aging stacked bar: open blockers by age bucket
+
+Median TTR trend line
+
+Goals (GLS)
+
+Expected vs actual chart
+
+Effort vs impact quadrant scatter
+
+Portfolio bubble chart (dept/org): x=gap, y=health, size=weight
+
+Enterprise rule: every metric has a tooltip: definition + scope + time window.
+
+7) Quick “Issue List” Summary (copy/paste for Jira)
+
+P0 (security)
+
+Employee sees Team/Dept/Approvals/Exports nav items
+
+Employee can access /reporting?scope=team by URL
+
+Ensure backend RBAC/ABAC blocks it too
+
+P1 (trust)
+
+Overdue badge shown while time remaining exists
+
+Goal progress shows 0/0 but “3 on track”
+
+Washed-out table state without skeleton/denied/empty messaging
+
+P2 (usability)
+
+“Same as Yesterday” not a clear button + no preview
+
+“Add Blocker” plain text; needs structured modal
+
+No sticky Save/Submit bar
+
+Bullet add flow lacks Enter-to-add, reorder, inline edit
