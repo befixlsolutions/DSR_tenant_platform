@@ -24,7 +24,7 @@ export const Sidebar = () => {
   };
 
   return (
-    <aside className="fixed left-0 top-14 h-[calc(100vh-3.5rem)] w-56 bg-white border-r border-neutral-200 overflow-y-auto custom-scrollbar z-40 flex flex-col">
+    <aside className="fixed left-0 top-14 h-[calc(100vh-3.5rem)] w-64 bg-white border-r border-neutral-200 overflow-y-auto custom-scrollbar z-40 flex flex-col">
       <nav className="p-4 flex-1 space-y-6">
         {NAVIGATION_SECTIONS.map((section) => {
           const visibleItems = section.items.filter((item) => {
@@ -43,12 +43,14 @@ export const Sidebar = () => {
           );
 
           return (
-            <div key={section.id} className="space-y-2">
+            <div key={section.id} className="space-y-2 relative">
               <button
                 onClick={() => toggleSection(section.id)}
                 className={clsx(
-                  'w-full flex items-center justify-between px-3 py-1 text-[10px] font-bold uppercase tracking-widest transition-colors',
-                  hasActiveItem ? 'text-primary-600' : 'text-neutral-400 hover:text-neutral-600'
+                  'w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-widest transition-colors',
+                  hasActiveItem
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-50'
                 )}
               >
                 <div className="flex items-center gap-2">
@@ -70,7 +72,7 @@ export const Sidebar = () => {
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.2, ease: 'easeInOut' }}
-                    className="space-y-1 overflow-hidden"
+                    className="space-y-1 overflow-hidden ml-2 pl-3 border-l-2 border-dashed border-neutral-200"
                   >
                     {visibleItems.map((item) => {
                       const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -84,10 +86,16 @@ export const Sidebar = () => {
                             className={clsx(
                               'group flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 relative',
                               isActive
-                                ? 'bg-primary-50 text-primary-700 shadow-sm'
+                                ? 'bg-primary-50 text-primary-700 shadow-sm border border-primary-100'
                                 : 'text-neutral-600 hover:text-neutral-900'
                             )}
                           >
+                            <span
+                              className={clsx(
+                                'absolute -left-4 top-1/2 h-px w-3 -translate-y-1/2',
+                                isActive ? 'bg-primary-300' : 'bg-neutral-300'
+                              )}
+                            />
                             <div className={clsx(
                               'p-1.5 rounded-lg transition-colors',
                               isActive ? 'bg-white shadow-sm' : 'bg-neutral-100 group-hover:bg-white'

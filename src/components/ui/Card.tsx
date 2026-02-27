@@ -22,9 +22,9 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     const Component = animate ? motion.div : 'div';
     const animationProps = animate
       ? {
-          initial: { opacity: 0, y: 20 },
+          initial: { opacity: 0, y: 10 },
           animate: { opacity: 1, y: 0 },
-          transition: { duration: 0.3 },
+          transition: { duration: 0.25 },
         }
       : {};
 
@@ -49,13 +49,13 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
 Card.displayName = 'Card';
 
 export const CardHeader = ({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) => (
-  <div className={clsx('mb-4', className)} {...props}>
+  <div className={clsx('mb-4 flex items-start justify-between gap-3', className)} {...props}>
     {children}
   </div>
 );
 
 export const CardTitle = ({ children, className, ...props }: HTMLAttributes<HTMLHeadingElement>) => (
-  <h3 className={clsx('text-base font-semibold text-neutral-900', className)} {...props}>
+  <h3 className={clsx('text-base font-bold text-neutral-900 tracking-tight', className)} {...props}>
     {children}
   </h3>
 );
